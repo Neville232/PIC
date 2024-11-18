@@ -2,6 +2,7 @@
 #use spi (SLAVE, CLK=PIN_C3, DI=PIN_C4, DO=PIN_C5, ENABLE=PIN_A5, MODE=0, BITS=8, STREAM=SPI_1)
 
 INT8 dato;
+int8 c=0;
 #define LED PIN_A0
 
 
@@ -16,6 +17,11 @@ void recibe() {
       
       case  0x02: 
          output_low(LED);
+         break;
+         
+      case  0x03: 
+         c = c+1;
+         spi_write(c); 
          break;
       
       default:

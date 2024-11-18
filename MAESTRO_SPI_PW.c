@@ -14,6 +14,9 @@
 // Comandos SPI que acepta el esclavo 
 #define     ENCENDER_LED    0x01        
 #define     APAGAR_LED      0x02   
+#define     CUENTA          0x03  
+
+int8 dato = 0;
 
 void main() 
 { 
@@ -32,12 +35,14 @@ void main()
     // Inicializa el hardware SSP para ser un SPI Maestro en Modo 0
     setup_spi(SPI_MASTER | SPI_MODE_0 | SPI_CLK_DIV_4); 
 
-    printf("Comandos para el Esclavo:\n\r"); 
+    printf("Comandos para los Esclavo:\n\r"); 
     printf("------------------------------------\n\r");
     printf("A --- para encender LED de Esclavo 1\n\r"); 
-    printf("B --- para apagar LED de Esclavo 1\n\r"); 
-    printf("C --- para encender LED de Esclavo 2\n\r"); 
-    printf("D --- para apagar LED de Esclavo 2\n\r"); 
+    printf("S --- para apagar LED de Esclavo 1\n\r"); 
+    printf("D --- para cuenta de Esclavo 1\n\r");
+    printf("Z --- para encender LED de Esclavo 2\n\r"); 
+    printf("X --- para apagar LED de Esclavo 2\n\r"); 
+    printf("C --- para cuenta de Esclavo 2\n\r");
     printf("------------------------------------\n\r"); 
     printf("Escriba algun comando\n\r"); 
 
@@ -51,31 +56,61 @@ void main()
         { 
             case 'A':     
                 output_low(SPI_SS1); 
-                spi_write(0x01);  
+                spi_write(ENCENDER_LED);                
                 output_high(SPI_SS1); 
                 delay_ms(10); // Pequeño retraso
                 break; 
 
-            case 'B':     
+            case 'S':     
                 output_low(SPI_SS1); 
-                spi_write(0x02); 
+                spi_write(APAGAR_LED); 
                 output_high(SPI_SS1); 
                 delay_ms(10); // Pequeño retraso
                 break; 
 
-            case 'C':     
+            case 'D':     
+                output_low(SPI_SS1); 
+                spi_write(CUENTA); 
+                output_high(SPI_SS1);
+                
+                delay_ms(10);
+                
+                output_low(SPI_SS1);
+                dato = spi_read(0);
+                spi_read(0);
+                output_high(SPI_SS1); 
+               
+                printf("La cuenta del esclavo 1 es: %u \n\r", dato);
+                break; 
+
+            case 'Z':     
                 output_low(SPI_SS2); 
                 spi_write(ENCENDER_LED); 
                 output_high(SPI_SS2); 
                 delay_ms(10); // Pequeño retraso
                 break; 
 
-            case 'D':     
+            case 'X':     
                 output_low(SPI_SS2); 
                 spi_write(APAGAR_LED); 
                 output_high(SPI_SS2); 
                 delay_ms(10); // Pequeño retraso
                 break;
+           
+            case 'C':     
+                output_low(SPI_SS2); 
+                spi_write(CUENTA); 
+                output_high(SPI_SS2); 
+                
+                delay_ms(10);
+                
+                output_low(SPI_SS2);
+                dato = spi_read(0);
+                spi_read(0);
+                output_high(SPI_SS2); 
+                
+                printf("La cuenta del esclavo 2 es: %d \n\r", dato);
+                break; 
               
             default: 
                 printf("%c es un caracter invalido.\n\r", c); 
